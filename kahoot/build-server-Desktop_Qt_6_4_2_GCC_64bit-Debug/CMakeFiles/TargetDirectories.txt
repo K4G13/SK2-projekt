@@ -1,0 +1,9 @@
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/server.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/edit_cache.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/rebuild_cache.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/list_install_components.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/install.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/install/local.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/install/strip.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/server_autogen_timestamp_deps.dir
+/home/piciu/Desktop/kahoot/build-server-Desktop_Qt_6_4_2_GCC_64bit-Debug/CMakeFiles/server_autogen.dir
