@@ -189,7 +189,7 @@ build server_autogen/timestamp server_autogen/mocs_compilation.cpp | ${cmake_nin
 #############################################
 # Phony custom command for CMakeFiles/server_autogen_timestamp_deps
 
-build CMakeFiles/server_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/server_autogen_timestamp_deps: phony /home/piciu/Qt/6.4.2/gcc_64/lib/libQt6Core.so.6.4.2 /home/piciu/Qt/6.4.2/gcc_64/lib/libQt6Network.so.6.4.2 /home/piciu/Qt/6.4.2/gcc_64/./libexec/uic /home/piciu/Qt/6.4.2/gcc_64/./libexec/moc /home/piciu/Qt/6.4.2/gcc_64/lib/libQt6Widgets.so.6.4.2
+build CMakeFiles/server_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/server_autogen_timestamp_deps: phony /home/piciu/Qt/6.4.2/gcc_64/lib/libQt6Core.so.6.4.2 /home/piciu/Qt/6.4.2/gcc_64/./libexec/moc /home/piciu/Qt/6.4.2/gcc_64/./libexec/uic /home/piciu/Qt/6.4.2/gcc_64/lib/libQt6Widgets.so.6.4.2 /home/piciu/Qt/6.4.2/gcc_64/lib/libQt6Network.so.6.4.2
 
 
 #############################################

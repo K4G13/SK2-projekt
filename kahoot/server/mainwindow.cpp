@@ -234,9 +234,9 @@ void MainWindow::kickSelected(){
 
 
         ///deleting room or changing room owner
-        Room * r;
+        Room * r = new Room(0);
         for(int i = 0 ; i < ui->rooms->count(); ++i){ r = reinterpret_cast<Room*>(ui->rooms->item(i)); if( r->roomID == u->roomID ) break; }
-        if(r){
+        if(r->roomID!=0){
 
             int nrPlayers = 0;
             for(int i = 0 ; i < ui->users->count(); ++i){
@@ -258,7 +258,8 @@ void MainWindow::kickSelected(){
                 }
             }
             else if(nrPlayers == 0){
-                if(r->timer){r->timer->stop(); r->timer->deleteLater();} delete r;
+                if(r->timer==nullptr) delete r;
+                else if(r->timer->isActive()) {r->timer->stop();r->timer->deleteLater();delete r;}
             }
 
         }
