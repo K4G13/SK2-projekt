@@ -17,6 +17,8 @@ class MainWindow : public QMainWindow
 public:    
     quint16 port = 2115;
 
+    bool gameInProgress = false;
+
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void connectBtnHit();

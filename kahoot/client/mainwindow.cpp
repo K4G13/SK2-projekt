@@ -125,7 +125,16 @@ void MainWindow::socketReadable(){
             ui->startGameBtt->setEnabled(true);
             ui->roomCode->setText(commands[i].mid(15,4));
         }
+        else if(commands[i].mid(0,10)=="your nick "){
+            ui->nick->setText(commands[i].mid(10,commands[i].size()-10));
+        }
+        else if(!gameInProgress && commands[i] == "you are room owner" ){
+            ui->createRoomGB->setEnabled(true);
+            ui->startGameBtt->setEnabled(true);
+            ui->createBtt->setEnabled(false);
+        }
         else if(commands[i]=="starting game"){
+            gameInProgress = true;
             ui->gameGB->setEnabled(true);
             ui->bttA->setStyleSheet("background-color: #4285F4");
             ui->bttB->setStyleSheet("background-color: #34a853");
@@ -176,6 +185,8 @@ void MainWindow::joinRoom(){
 }
 
 void MainWindow::startGame(){
+
+    gameInProgress = true;
 
     QString str = "start game "+ ui->roomCode->text() +";";
     QByteArray command = str.toUtf8();
@@ -243,10 +254,7 @@ void MainWindow::sendAnswearD(){
 }
 
 void MainWindow::sumUp(QString str){
-
-    QStringList str2 = str.split("/");
-    float procent = (str2[0].toFloat() / str2[1].toFloat() )*100;
-    ui->display->setText("Udalo ci sie zdobyc "+str2[0]+"/"+str2[1]+" punktow("+ QString::number(procent) +"%)");
+    ui->display->setText("Udalo ci sie zdobyc "+str+" punktow");
 
     ui->nickGB->setEnabled(true);
     ui->createRoomGB->setEnabled(true);

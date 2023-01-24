@@ -92,17 +92,33 @@ void MainWindow::error(User* u, QTcpSocket::SocketError){
     ui->log->append(u->toString()+" disconnected...");
 
 
-    // deleting room if it was only member
-    int nrPlayers = 0;
-    for(int i = 0 ; i < ui->users->count(); ++i){
-        User * u2 = reinterpret_cast<User*>(ui->users->item(i));
-        if( u2->roomID == u->roomID && u2 != u ) nrPlayers++;
-    }
-    if(nrPlayers == 0){
-        for(int i = 0 ; i < ui->rooms->count(); ++i){
-            Room * r = reinterpret_cast<Room*>(ui->rooms->item(i));
-            if( r->roomID == u->roomID ) { if(r->timer)r->timer->stop(); delete r;}
+    Room * r;
+    for(int i = 0 ; i < ui->rooms->count(); ++i){ r = reinterpret_cast<Room*>(ui->rooms->item(i)); if( r->roomID == u->roomID ) break; }
+    if(r){
+
+        int nrPlayers = 0;
+        for(int i = 0 ; i < ui->users->count(); ++i){
+            User * u2 = reinterpret_cast<User*>(ui->users->item(i));
+            if( u2->roomID == r->roomID && u2 != u ) nrPlayers++;
         }
+
+        if(nrPlayers>=1 && u == r->owner){
+            for(int i = 0 ; i < ui->users->count(); ++i){
+                User * u2 = reinterpret_cast<User*>(ui->users->item(i));
+                if( u2->roomID == r->roomID && u2 != u ) {
+                    r->owner = u2;
+
+                    QByteArray msg = QString("you are room owner;").toUtf8();
+                    u2->sock->write(msg);
+
+                    break;
+                }
+            }
+        }
+        else if(nrPlayers == 0){
+            if(r->timer){r->timer->stop(); r->timer->deleteLater();} delete r;
+        }
+
     }
 
 
@@ -195,8 +211,19 @@ void MainWindow::joinRoom(User * u, QString roomID){
 }
 
 void MainWindow::changeNick(User * u, QString str){
+
+    if(str=="")str = "user"+QString::number(u->sock->peerPort()) ;
+
+    for(int i = 0 ; i < ui->users->count(); ++i){
+        User * u2 = reinterpret_cast<User*>(ui->users->item(i));
+        if( u2->nick == str ) str = str + "(2)";
+    }
+
     u->nick = str;
     u->setText(u->toString());
+
+    QByteArray msg = QString("your nick "+str+";").toUtf8();
+    u->sock->write(msg);
 }
 
 void MainWindow::kickSelected(){
@@ -206,19 +233,34 @@ void MainWindow::kickSelected(){
         ui->log->append(u->toString()+" kicked...");
 
 
-        // deleting room if it was only member
-        int nrPlayers = 0;
-        for(int i = 0 ; i < ui->users->count(); ++i){
-            User * u2 = reinterpret_cast<User*>(ui->users->item(i));
-            if( u2->roomID == u->roomID && u2 != u ) nrPlayers++;
+        ///deleting room or changing room owner
+        Room * r;
+        for(int i = 0 ; i < ui->rooms->count(); ++i){ r = reinterpret_cast<Room*>(ui->rooms->item(i)); if( r->roomID == u->roomID ) break; }
+        if(r){
 
-        }
-        if(nrPlayers == 0){
-            for(int i = 0 ; i < ui->rooms->count(); ++i){
-
-                Room * r = reinterpret_cast<Room*>(ui->rooms->item(i));
-                if( r->roomID == u->roomID ) { if(r->timer)r->timer->stop(); delete r;}
+            int nrPlayers = 0;
+            for(int i = 0 ; i < ui->users->count(); ++i){
+                User * u2 = reinterpret_cast<User*>(ui->users->item(i));
+                if( u2->roomID == r->roomID && u2 != u ) nrPlayers++;
             }
+
+            if(nrPlayers>=1 && u == r->owner){
+                for(int i = 0 ; i < ui->users->count(); ++i){
+                    User * u2 = reinterpret_cast<User*>(ui->users->item(i));
+                    if( u2->roomID == r->roomID && u2 != u ) {
+                        r->owner = u2;
+
+                        QByteArray msg = QString("you are room owner;").toUtf8();
+                        u2->sock->write(msg);
+
+                        break;
+                    }
+                }
+            }
+            else if(nrPlayers == 0){
+                if(r->timer){r->timer->stop(); r->timer->deleteLater();} delete r;
+            }
+
         }
 
 
@@ -298,7 +340,15 @@ void MainWindow::checkAnswear(User * u, QString ans){
     }
 
    /// ui->log->append( quiz[questionNr].correct + "|" + ans );
-    if( quiz[questionNr].correct == ans ) u->points++;
+    //if( quiz[questionNr].correct == ans ) u->points ++ ;
+
+    if( quiz[questionNr].correct == ans ){
+        Room * r;
+        for(int i = 0 ; i < ui->rooms->count(); ++i){ r = reinterpret_cast<Room*>(ui->rooms->item(i)); if( r->roomID == u->roomID ) break; }
+        u->points += r->timer->remainingTime();
+        QByteArray msg = QString("points "+QString::number(r->timer->remainingTime())+";").toUtf8();
+        u->sock->write(msg);
+    }
 
 }
 
@@ -312,7 +362,7 @@ void MainWindow::sumUpGame(Room * r){
 
             ui->log->append( u->toString()+": "+QString::number(u->points)+"pts." );
 
-            QByteArray msg = QString("sumup "+QString::number(u->points)+"/"+QString::number(quiz.size())+";").toUtf8();
+            QByteArray msg = QString("sumup "+QString::number(u->points)+";").toUtf8();
             u->sock->write(msg);
 
             u->points = 0;
