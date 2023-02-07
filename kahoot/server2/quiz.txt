@@ -1,0 +1,25 @@
+1;10000;2+2?;A
+4
+7
+420
+18
+2;10000;Miasto no polnocy?;C
+Poznan
+Warszawa 
+Gdansk
+Krakow
+3;10000;liczba 6 w systemie dwujowym=?;A
+0110 
+1100
+2222
+1001
+4;10000;27ym wyrazem w hymnie polski jest?;B
+claczmy
+sie
+z
+narodem
+5;10000;czy?;D
+tak
+nie
+50/50
+wszystki odp. sa poprawne
