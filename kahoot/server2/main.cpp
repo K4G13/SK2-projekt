@@ -270,7 +270,6 @@ void interpretMsg(int clientFd, char * buffer, int bSize){
                 char ans = comm[8];
                 int rIndex = getIndexOfRoomInRooms(users[getIndexOfUserInUsers(clientFd)].roomCode);
                 if( quiz[rooms[rIndex].currentQuestion-1].correct[0] == ans ){
-                    printf("git\n");
                     users[getIndexOfUserInUsers(clientFd)].points ++;
                 }
             }
