@@ -23,8 +23,8 @@ class Room{
     public:
         int code;
         int ownerFd;
+        bool gameStarted;
         int currentQuestion;
-        //questionStart;
         std::time_t startTime;
 
     Room(int ownerFd);
@@ -36,6 +36,7 @@ std::vector<Room> rooms;
 Room::Room(int ownerFd){
     this->code = 0000;
     this->ownerFd = ownerFd;
+    this->gameStarted = false;
     this->currentQuestion = 0;
 
     int minC = 1000;
@@ -60,7 +61,7 @@ Room::Room(int ownerFd){
 }
 
 void listRooms(){
-    printf(" | > list rooms:\n");
+    printf(" | > list rooms\n");
     for(Room r: rooms){ 
         printf("   + room%d owner: [%d]\n", r.code, r.ownerFd);
     }

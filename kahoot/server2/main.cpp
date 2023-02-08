@@ -237,7 +237,8 @@ void interpretMsg(int clientFd, char * buffer, int bSize){
                 int uIndex = getIndexOfUserInUsers(clientFd);
 
                 if(comm.substr(5,comm.size()-6) == ""){      
-                    printf(" | > setting default nick for [%d]\n",clientFd);    
+                    printf(" | > setting default nick for [%d]\n",clientFd);   
+                    users[uIndex].nick = "user"+std::to_string(users[uIndex].fd-3); 
                     std::string res = "your nick " + users[uIndex].nick + ";";
                     char* response = new char[res.size() + 1];
                     strcpy(response, res.c_str());
@@ -250,16 +251,19 @@ void interpretMsg(int clientFd, char * buffer, int bSize){
                 }
 
             }
-            /// TODO: START GAME
-            else if(comm.size()>=12 && comm.substr(0,11)=="start game "){
+            /// START GAME
+            else if(comm.size()>=12 && comm.substr(0,11)=="start game "){                
 
                 int code = 0;
                 try { code = std::stoi( comm.substr(11,comm.size()-12) ); } 
                 catch (...) {
                     printf(" | ! can not start game, wrong code\n");
                 } 
-                if(code && std::to_string(code).size() == 4 ){  
-                    gameThreads.push_back(std::thread(startGame,code));
+                if(code && std::to_string(code).size() == 4 && getIndexOfRoomInRooms(code)!=-1){  
+                    if( rooms[getIndexOfRoomInRooms(code)].gameStarted )
+                        printf(" | ! game have already started\n");
+                    else
+                        gameThreads.push_back(std::thread(startGame,code));
                 }
                 else printf(" | ! can not start game, wrong code\n");
 
@@ -268,7 +272,7 @@ void interpretMsg(int clientFd, char * buffer, int bSize){
             else if(comm.size()==10 && comm.substr(0,8)=="answear "){          
                 char ans = comm[8];
                 int rIndex = getIndexOfRoomInRooms(users[getIndexOfUserInUsers(clientFd)].roomCode);
-                if( quiz[rooms[rIndex].currentQuestion-1].correct[0] == ans ){
+                if( rIndex != -1 && rooms[rIndex].gameStarted && quiz[rooms[rIndex].currentQuestion-1].correct[0] == ans ){
                     std::time_t endTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//std::time(0);
                     long int t = static_cast<long int> ( endTime - rooms[rIndex].startTime );                    
                     users[getIndexOfUserInUsers(clientFd)].points += quiz[rooms[rIndex].currentQuestion].time - t;
@@ -301,6 +305,7 @@ void sendToAllInRoom(std::string msg, int roomCode){
 void startGame(int roomCode){      
 
     int rIndex = getIndexOfRoomInRooms(roomCode);      
+    rooms[rIndex].gameStarted = true;
 
     printf(" | > STARTING GAME FOR ROOM %d\n",roomCode);   
     sendToAllInRoom("starting game;",roomCode);
