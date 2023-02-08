@@ -6,3 +6,4 @@ Serwer(QTSocets) znajduje się w:
   
 Serwer(BSD socets) znajduje się w:
   + kahoot/server2/SERVER
+  - g++ --std=c++20 -Wall -O0 -g -pthread -o server main.cpp
