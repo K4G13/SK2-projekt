@@ -14,6 +14,8 @@
 #include <list>
 #include <signal.h>
 #include <vector>
+#include <chrono>
+#include <ctime>   
 
 
 class Room{
@@ -22,6 +24,8 @@ class Room{
         int code;
         int ownerFd;
         int currentQuestion;
+        //questionStart;
+        std::time_t startTime;
 
     Room(int ownerFd);
 

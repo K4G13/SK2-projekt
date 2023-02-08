@@ -258,8 +258,7 @@ void interpretMsg(int clientFd, char * buffer, int bSize){
                 catch (...) {
                     printf(" | ! can not start game, wrong code\n");
                 } 
-                if(code && std::to_string(code).size() == 4 ){                    
-                    //startGame(code);
+                if(code && std::to_string(code).size() == 4 ){  
                     gameThreads.push_back(std::thread(startGame,code));
                 }
                 else printf(" | ! can not start game, wrong code\n");
@@ -270,7 +269,10 @@ void interpretMsg(int clientFd, char * buffer, int bSize){
                 char ans = comm[8];
                 int rIndex = getIndexOfRoomInRooms(users[getIndexOfUserInUsers(clientFd)].roomCode);
                 if( quiz[rooms[rIndex].currentQuestion-1].correct[0] == ans ){
-                    users[getIndexOfUserInUsers(clientFd)].points ++;
+                    std::time_t endTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//std::time(0);
+                    long int t = static_cast<long int> ( endTime - rooms[rIndex].startTime );                    
+                    users[getIndexOfUserInUsers(clientFd)].points += quiz[rooms[rIndex].currentQuestion].time - t;
+                    //printf("> czas odpowiedzi: %ld\n",t);
                 }
             }
             /// unknown command - ignore 
@@ -296,12 +298,17 @@ void sendToAllInRoom(std::string msg, int roomCode){
 
 }
 
-void startGame(int roomCode){            
+void startGame(int roomCode){      
+
+    int rIndex = getIndexOfRoomInRooms(roomCode);      
 
     printf(" | > STARTING GAME FOR ROOM %d\n",roomCode);   
     sendToAllInRoom("starting game;",roomCode);
 
     for( int i=0; i<int(quiz.size()); i++ ){
+
+        std::time_t startTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//std::time(0);
+        rooms[rIndex].startTime = startTime;
 
         sendToAllInRoom( 
             "question "+
@@ -321,7 +328,6 @@ void startGame(int roomCode){
 
     }
 
-    int rIndex = getIndexOfRoomInRooms(roomCode);
     rooms.erase(rooms.begin() + rIndex);   
     for(User u: users){
         if(u.roomCode==roomCode) {
@@ -335,6 +341,7 @@ void startGame(int roomCode){
         }
     }
 
-    printf(" | > GAME ENDED IN ROOM %d\n",roomCode);     
+    printf(" | > GAME ENDED IN ROOM %d\n",roomCode);   
 
+    return;
 }

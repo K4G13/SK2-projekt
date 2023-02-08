@@ -24,7 +24,7 @@ class User{
 
         std::string nick;
         int roomCode;
-        int points;
+        long int points;
 
     User(int clientFd);
 
